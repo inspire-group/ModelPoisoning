@@ -128,6 +128,8 @@ def init():
                         help='Weighting factor for distance constraints')
     parser.add_argument("--data_rep", type=float, default=10,
                         help='Data repetitions for data poisoning')
+    parser.add_argument('--gpu_ids', nargs='+', type=int, default=None,
+                        help='GPUs to run on')
 
 
     global args
@@ -139,18 +141,17 @@ def init():
         mal_agent_index = args.k - 1
 
     global gpu_ids
-    if args.mal:
-        gpu_ids = [0,1]
+    if args.gpu_ids is not None:
+        gpu_ids = args.gpu_ids
     else:
         gpu_ids = [4,5]
-    # gpu_ids = [0]
     global num_gpus
     num_gpus = len(gpu_ids)
-    # max_agents_per_gpu = (num_agents+num_mal_agents)/num_gpus
+
     global max_agents_per_gpu
 
     global IMAGE_ROWS, IMAGE_COLS, NUM_CHANNELS, NUM_CLASSES, BATCH_SIZE
-    # global NUM_CLASSES
+
     global max_acc
 
     if 'MNIST' in args.dataset:

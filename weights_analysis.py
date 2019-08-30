@@ -10,8 +10,8 @@ mpl.use('Agg')
 import matplotlib.pyplot as plt
 plt.ioff()
 import collections
-from mpl_toolkits.mplot3d import Axes3D
-from scipy.stats import wasserstein_distance
+# from mpl_toolkits.mplot3d import Axes3D
+# from scipy.stats import wasserstein_distance
 
 import global_vars as gv
 
@@ -106,22 +106,6 @@ def top_k_finder(delta_curr, t, mode=None, step=None):
         ben_max.append(np.amax(delta_curr_w))
         ben_min.append(np.amin(delta_curr_w))
 
-    # if step is None:
-    #     if mode == 'Malicious':
-    #         plt.savefig(gv.figures_dir_name + 'hist_mal_delta_%s_%s_%s.png' %
-    #                     (args.mal_obj, args.mal_strat, t))
-    #     elif mode == 'Benign':
-    #         plt.savefig(gv.figures_dir_name + 'hist_ben_delta_%s_%s_%s.png' %
-    #                     (args.mal_obj, args.mal_strat, t))
-    #     elif mode is None:
-    #         plt.savefig(gv.figures_dir_name + 'hist_all_ben_%s.png' % t)
-    # else:
-    #     if mode == 'Malicious':
-    #         plt.savefig(gv.figures_dir_name + 'hist_mal_delta_%s_%s_t%s_step%s.png' %
-    #                     (args.mal_obj, args.mal_strat, t, step))        
-
-    # plt.clf()
-
     min_signed_weight = np.amin(delta_curr_w)
     max_signed_weight = np.amax(delta_curr_w)
 
@@ -170,43 +154,16 @@ ben_max = []
 ben_min = []
 
 
-# fig = plt.figure(figsize=plt.figaspect(.5))
+
 fig = plt.figure()
-# ax_ben = fig.add_subplot(121,projection='3d')
 ax_ben = fig.add_subplot(111)
-# ax_mal = fig.add_subplot(122)
-# ax_mal = fig.add_subplot(122,projection='3d')
-# fig.tight_layout()
-# fig.suptitle('Weight distribution for \n benign and malicious agents')
 
-# ax_ben.set_title('Benign')
-# ax_mal.set_title('Malicious')
-
-# ax_ben.set_ylabel('Time',labelpad=10)
-# ax_mal.set_ylabel('Time',labelpad=10)
 
 ax_ben.set_xlabel('Weight values')
-# ax_mal.set_xlabel('Weight values')
 
-# ax_ben.tick_params(axis='z', which='major', pad=10)
-# ax_mal.tick_params(axis='z', which='major', pad=10)
 
 ax_ben.grid(False)
-# ax_mal.grid(False)
 
-# for label in ax_ben.xaxis.get_ticklabels()[1::2]:
-#     label.set_visible(False)
-
-# for label in ax_mal.xaxis.get_ticklabels()[::2]:
-#     label.set_visible(False)
-
-# for label in ax_ben.yaxis.get_ticklabels()[::1]:
-#     label.set_visible(True)
-
-# for label in ax_mal.yaxis.get_ticklabels()[::1]:
-#     label.set_visible(True)
-
-# nbins = 500
 final_t = 0
 for t in range(4,5):
     print('Time Step %s' % t)
@@ -238,13 +195,6 @@ for t in range(4,5):
             mal_weights_curr, mal_bias_curr = collate_weights(mal_delta)
             mal_delta_hist_1d, mal_bars = top_k_finder(mal_delta, t, mode)
             mal_flag = 1
-
-
-# ax_mal.set_ylim(bottom=0,top=final_t)
-# ax_ben.set_ylim(bottom=0,top=final_t)
-
-# ax_mal.set_xlim(left=min(mal_min),right=max(mal_max))
-# ax_ben.set_xlim(left=min(ben_min),right=max(ben_max))
 
 ax_ben.legend((ben_bars[0],mal_bars[0]),('Benign','Malicious'))
 

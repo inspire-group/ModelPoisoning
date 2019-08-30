@@ -10,7 +10,7 @@ import keras.backend as K
 from mnist import model_mnist
 from census_utils import census_model_1
 
-from eval_utils import eval_minimal
+from utils.eval_utils import eval_minimal
 
 import global_vars as gv
 

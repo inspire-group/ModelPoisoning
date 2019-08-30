@@ -8,12 +8,12 @@ import os
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 from multiprocessing import Process, Manager
 
-from io_utils import data_setup, mal_data_setup
+from utils.io_utils import data_setup, mal_data_setup
 import global_vars as gv
 from agents import agent, master
-from eval_utils import eval_func, eval_minimal
+from utils.eval_utils import eval_func, eval_minimal
 from malicious_agent import mal_agent
-from dist_utils import collate_weights, model_shape_size
+from utils.dist_utils import collate_weights, model_shape_size
 
 def train_fn(X_train_shards, Y_train_shards, X_test, Y_test, return_dict,
              mal_data_X=None, mal_data_Y=None):

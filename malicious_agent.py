@@ -7,11 +7,11 @@ import tensorflow as tf
 import numpy as np
 import keras.backend as K
 
-from mnist import model_mnist
-from eval_utils import eval_minimal, mal_eval_single, mal_eval_multiple
-from io_utils import file_write
-from census_utils import census_model_1
-from dist_utils import est_accuracy, weight_constrain
+from utils.mnist import model_mnist
+from utils.eval_utils import eval_minimal, mal_eval_single, mal_eval_multiple
+from utils.io_utils import file_write
+from utils.census_utils import census_model_1
+from utils.dist_utils import est_accuracy, weight_constrain
 
 import global_vars as gv
 

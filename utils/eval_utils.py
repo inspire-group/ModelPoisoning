@@ -10,7 +10,6 @@ import keras.backend as K
 from keras.utils import np_utils
 
 from mnist import model_mnist
-from cifar_utils import cifar_10_model
 from census_utils import census_model_1
 import global_vars as gv
 from io_utils import file_write
