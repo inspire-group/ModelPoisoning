@@ -144,7 +144,7 @@ def init():
     if args.gpu_ids is not None:
         gpu_ids = args.gpu_ids
     else:
-        gpu_ids = [4,5]
+        gpu_ids = [3,4]
     global num_gpus
     num_gpus = len(gpu_ids)
 

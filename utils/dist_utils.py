@@ -57,7 +57,7 @@ def est_accuracy(mal_visible, t):
         # delta_other_prev_1 = shared_weights - shared_weights_prev - alpha_m * (mal_weights_prev - shared_weights_prev)
         # np.save(gv.dir_name+'delta_other_%s.npy' % t, delta_other_prev)
         delta_other_prev = np.load(
-            gv.dir_name + 'ben_delta_t%s.npy' % mal_prev_t)
+            gv.dir_name + 'ben_delta_t%s.npy' % mal_prev_t, allow_pickle=True)
         delta_other_prev = delta_other_prev / (t - mal_prev_t)
         print('Divisor: %s' % (t - mal_prev_t))
         # est_accuracy_l2 = 0.0
@@ -71,7 +71,7 @@ def est_accuracy(mal_visible, t):
         if mal_prev_prev_t >= args.mal_delay:
             # delta_other_prev_prev = np.load(gv.dir_name+'delta_other_%s.npy' % mal_prev_prev_t)
             delta_other_prev_prev = np.load(
-                gv.dir_name + 'ben_delta_t%s.npy' % mal_prev_prev_t)
+                gv.dir_name + 'ben_delta_t%s.npy' % mal_prev_prev_t, allow_pickle=True)
             ben_delta_diff = delta_other_prev - delta_other_prev_prev
             est_accuracy_l2 = 0.0
             for i in range(len(ben_delta_diff)):

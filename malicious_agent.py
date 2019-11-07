@@ -436,7 +436,7 @@ def mal_agent(X_shard, Y_shard, mal_data_X, mal_data_Y, t, gpu_id, return_dict,
     
     args = gv.args
 
-    shared_weights = np.load(gv.dir_name + 'global_weights_t%s.npy' % t)
+    shared_weights = np.load(gv.dir_name + 'global_weights_t%s.npy' % t, allow_pickle=True)
     
     holdoff_flag = 0
     if 'holdoff' in args.mal_strat:

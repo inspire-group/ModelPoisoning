@@ -75,7 +75,7 @@ def train_fn(X_train_shards, Y_train_shards, X_test, Y_test, return_dict,
 
         print('Joined all processes for time step %s' % t)
 
-        global_weights = np.load(gv.dir_name + 'global_weights_t%s.npy' % t)
+        global_weights = np.load(gv.dir_name + 'global_weights_t%s.npy' % t, allow_pickle=True)
 
         if 'avg' in args.gar:
             if args.mal:

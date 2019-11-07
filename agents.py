@@ -7,8 +7,8 @@ import numpy as np
 # tf.set_random_seed(777)
 # np.random.seed(777)
 import keras.backend as K
-from mnist import model_mnist
-from census_utils import census_model_1
+from utils.mnist import model_mnist
+from utils.census_utils import census_model_1
 
 from utils.eval_utils import eval_minimal
 
@@ -28,7 +28,7 @@ def agent(i, X_shard, Y_shard, t, gpu_id, return_dict, X_test, Y_test, lr=None):
     os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
     os.environ["CUDA_VISIBLE_DEVICES"] = str(gpu_id)
 
-    shared_weights = np.load(gv.dir_name + 'global_weights_t%s.npy' % t)
+    shared_weights = np.load(gv.dir_name + 'global_weights_t%s.npy' % t, allow_pickle=True)
     shard_size = len(X_shard)
 
     # if i == 0:
