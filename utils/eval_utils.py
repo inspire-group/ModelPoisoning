@@ -34,14 +34,14 @@ def eval_setup(global_weights):
         global_model = census_model_1()
 
     if args.dataset == 'census':
-        x = tf.placeholder(shape=(None,
+        x = tf.compat.v1.placeholder(shape=(None,
                                 gv.DATA_DIM), dtype=tf.float32)
     else:
-        x = tf.placeholder(shape=(None,
+        x = tf.compat.v1.placeholder(shape=(None,
                                   gv.IMAGE_ROWS,
                                   gv.IMAGE_COLS,
                                   gv.NUM_CHANNELS), dtype=tf.float32)
-    y = tf.placeholder(dtype=tf.int64)
+    y = tf.compat.v1.placeholder(dtype=tf.int64)
 
     logits = global_model(x)
     prediction = tf.nn.softmax(logits)
@@ -49,14 +49,14 @@ def eval_setup(global_weights):
         labels=y, logits=logits))
 
     if args.k > 1:
-        config = tf.ConfigProto(gpu_options=gv.gpu_options)
+        config = tf.compat.v1.ConfigProto(gpu_options=gv.gpu_options)
         # config.gpu_options.allow_growth = True
-        sess = tf.Session(config=config)
+        sess = tf.compat.v1.Session(config=config)
     elif args.k == 1:
-        sess = tf.Session()
+        sess = tf.compat.v1.Session()
     
     K.set_session(sess)
-    sess.run(tf.global_variables_initializer())
+    sess.run(tf.compat.v1.global_variables_initializer())
 
     global_model.set_weights(global_weights_np)
 

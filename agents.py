@@ -27,8 +27,9 @@ def agent(i, X_shard, Y_shard, t, gpu_id, return_dict, X_test, Y_test, lr=None):
     # set environment
     os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
     os.environ["CUDA_VISIBLE_DEVICES"] = str(gpu_id)
+    print(gv.dir_name + 'global_weights_t%s.npy' % t)
 
-    shared_weights = np.load(gv.dir_name + 'global_weights_t%s.npy' % t)
+    shared_weights = np.load(gv.dir_name + 'global_weights_t%s.npy' % t, allow_pickle=True)
     shard_size = len(X_shard)
 
     # if i == 0:
@@ -37,22 +38,22 @@ def agent(i, X_shard, Y_shard, t, gpu_id, return_dict, X_test, Y_test, lr=None):
     #     print('Global success at time {}: {}, loss {}'.format(t,eval_success,eval_loss))
 
     if args.steps is not None:
-        num_steps = args.steps
+        num_steps = int(args.steps)
     else:
-        num_steps = int(args.E) * shard_size / args.B
+        num_steps = int(args.E) * shard_size // args.B
 
     # with tf.device('/gpu:'+str(gpu_id)):
     if args.dataset == 'census':
-        x = tf.placeholder(shape=(None,
+        x = tf.compat.v1.placeholder(shape=(None,
                               gv.DATA_DIM), dtype=tf.float32)
-        # y = tf.placeholder(dtype=tf.float32)
-        y = tf.placeholder(dtype=tf.int64)
+        # y = tf.compat.v1.placeholder(dtype=tf.float32)
+        y = tf.compat.v1.placeholder(dtype=tf.int64)
     else:
-        x = tf.placeholder(shape=(None,
+        x = tf.compat.v1.placeholder(shape=(None,
                                   gv.IMAGE_ROWS,
                                   gv.IMAGE_COLS,
                                   gv.NUM_CHANNELS), dtype=tf.float32)
-        y = tf.placeholder(dtype=tf.int64)
+        y = tf.compat.v1.placeholder(dtype=tf.int64)
 
     if 'MNIST' in args.dataset:
         agent_model = model_mnist(type=args.model_num)
@@ -72,20 +73,20 @@ def agent(i, X_shard, Y_shard, t, gpu_id, return_dict, X_test, Y_test, lr=None):
     prediction = tf.nn.softmax(logits)  
 
     if args.optimizer == 'adam':
-        optimizer = tf.train.AdamOptimizer(
+        optimizer = tf.compat.v1.train.AdamOptimizer(
             learning_rate=lr).minimize(loss)
     elif args.optimizer == 'sgd':
         optimizer = tf.train.GradientDescentOptimizer(
             learning_rate=lr).minimize(loss)
 
     if args.k > 1:
-        config = tf.ConfigProto(gpu_options=gv.gpu_options)
+        config = tf.compat.v1.ConfigProto(gpu_options=gv.gpu_options)
         # config.gpu_options.allow_growth = True
-        sess = tf.Session(config=config)
+        sess = tf.compat.v1.Session(config=config)
     elif args.k == 1:
-        sess = tf.Session()
+        sess = tf.compat.v1.Session()
     K.set_session(sess)
-    sess.run(tf.global_variables_initializer())
+    sess.run(tf.compat.v1.global_variables_initializer())
 
     agent_model.set_weights(shared_weights)
     # print('loaded shared weights')
@@ -127,11 +128,11 @@ def master():
 
     args = gv.args
     print('Initializing master model')
-    config = tf.ConfigProto(gpu_options=gv.gpu_options)
+    config = tf.compat.v1.ConfigProto(gpu_options=gv.gpu_options)
     config.gpu_options.allow_growth = True
-    sess = tf.Session(config=config)
+    sess = tf.compat.v1.Session(config=config)
     K.set_session(sess)
-    sess.run(tf.global_variables_initializer())
+    sess.run(tf.compat.v1.global_variables_initializer())
 
     if 'MNIST' in args.dataset:
         global_model = model_mnist(type=args.model_num)

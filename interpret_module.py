@@ -47,19 +47,19 @@ if 'MNIST' in args.dataset:
 elif args.dataset == 'CIFAR-10':
     model = cifar_10_model()
 
-x = tf.placeholder(shape=(None,
+x = tf.compat.v1.placeholder(shape=(None,
                           gv.IMAGE_ROWS,
                           gv.IMAGE_COLS,
                           gv.NUM_CHANNELS), dtype=tf.float32)
-y = tf.placeholder(dtype=tf.int64)
+y = tf.compat.v1.placeholder(dtype=tf.int64)
 
 logits = model(x)
 prediction = tf.nn.softmax(logits)
 
-sess = tf.Session()
+sess = tf.compat.v1.Session()
 
 K.set_session(sess)
-sess.run(tf.global_variables_initializer())
+sess.run(tf.compat.v1.global_variables_initializer())
 
 model.set_weights(weights_np)
 

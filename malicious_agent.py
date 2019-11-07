@@ -25,22 +25,22 @@ def benign_train(x, y, agent_model, logits, X_shard, Y_shard, sess, shared_weigh
     prediction = tf.nn.softmax(logits)
 
     if args.optimizer == 'adam':
-        optimizer = tf.train.AdamOptimizer(
+        optimizer = tf.compat.v1.train.AdamOptimizer(
             learning_rate=args.eta).minimize(loss)
     elif args.optimizer == 'sgd':
         optimizer = tf.train.GradientDescentOptimizer(
             learning_rate=args.eta).minimize(loss)
 
     if args.k > 1:
-        config = tf.ConfigProto(gpu_options=gv.gpu_options)
+        config = tf.compat.v1.ConfigProto(gpu_options=gv.gpu_options)
         # config.gpu_options.allow_growth = True
-        temp_sess = tf.Session(config=config)
+        temp_sess = tf.compat.v1.Session(config=config)
     elif args.k == 1:
-        temp_sess = tf.Session()
+        temp_sess = tf.compat.v1.Session()
     
     K.set_session(temp_sess)
 
-    temp_sess.run(tf.global_variables_initializer())
+    temp_sess.run(tf.compat.v1.global_variables_initializer())
 
     agent_model.set_weights(shared_weights)
     shard_size = len(X_shard)
@@ -293,15 +293,15 @@ def mal_single_algs(x, y, logits, agent_model, shared_weights, sess, mal_data_X,
         weights_pl = None
 
     if 'adam' in args.optimizer:
-        optimizer = tf.train.AdamOptimizer(learning_rate=args.eta).minimize(loss)
-        mal_optimizer = tf.train.AdamOptimizer(
+        optimizer = tf.compat.v1.train.AdamOptimizer(learning_rate=args.eta).minimize(loss)
+        mal_optimizer = tf.compat.v1.train.AdamOptimizer(
             learning_rate=args.eta).minimize(mal_loss)
     elif 'sgd' in args.optimizer:
         mal_optimizer = tf.train.GradientDescentOptimizer(
         learning_rate=args.eta).minimize(mal_loss)
         optimizer = tf.train.GradientDescentOptimizer(learning_rate=args.eta).minimize(loss)
 
-    sess.run(tf.global_variables_initializer())
+    sess.run(tf.compat.v1.global_variables_initializer())
 
     agent_model.set_weights(start_weights)
 
@@ -406,10 +406,10 @@ def mal_all_algs(x, y, logits, agent_model, shared_weights, sess, mal_data_X, ma
     loss = -1.0 * tf.reduce_mean(tf.nn.sparse_softmax_cross_entropy_with_logits(
         labels=y, logits=logits))
 
-    optimizer = tf.train.AdamOptimizer(learning_rate=args.eta).minimize(loss)
+    optimizer = tf.compat.v1.train.AdamOptimizer(learning_rate=args.eta).minimize(loss)
     # optimizer = tf.train.GradientDescentOptimizer(learning_rate=args.eta).minimize(loss)
 
-    sess.run(tf.global_variables_initializer())
+    sess.run(tf.compat.v1.global_variables_initializer())
 
     agent_model.set_weights(shared_weights)
 
@@ -457,15 +457,15 @@ def mal_agent(X_shard, Y_shard, mal_data_X, mal_data_Y, t, gpu_id, return_dict,
     os.environ["CUDA_VISIBLE_DEVICES"] = str(gpu_id)
 
     if args.dataset == 'census':
-        x = tf.placeholder(shape=(None,
+        x = tf.compat.v1.placeholder(shape=(None,
                               gv.DATA_DIM), dtype=tf.float32)
-        y = tf.placeholder(dtype=tf.int64)
+        y = tf.compat.v1.placeholder(dtype=tf.int64)
     else:
-        x = tf.placeholder(shape=(None,
+        x = tf.compat.v1.placeholder(shape=(None,
                                   gv.IMAGE_ROWS,
                                   gv.IMAGE_COLS,
                                   gv.NUM_CHANNELS), dtype=tf.float32)
-        y = tf.placeholder(dtype=tf.int64)
+        y = tf.compat.v1.placeholder(dtype=tf.int64)
 
     if 'MNIST' in args.dataset:
         agent_model = model_mnist(type=args.model_num)
@@ -479,9 +479,9 @@ def mal_agent(X_shard, Y_shard, mal_data_X, mal_data_Y, t, gpu_id, return_dict,
     eval_loss = tf.reduce_mean(tf.nn.sparse_softmax_cross_entropy_with_logits(
         labels=y, logits=logits))
 
-    config = tf.ConfigProto(gpu_options=gv.gpu_options)
+    config = tf.compat.v1.ConfigProto(gpu_options=gv.gpu_options)
     # config.gpu_options.allow_growth = True
-    sess = tf.Session(config=config)
+    sess = tf.compat.v1.Session(config=config)
     K.set_session(sess)
     
     if t >= args.mal_delay and holdoff_flag == 0:
