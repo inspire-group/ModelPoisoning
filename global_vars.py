@@ -123,7 +123,7 @@ def init():
     parser.add_argument("--ls", type=int, default=1,
                         help='Training steps for each malicious step')
     parser.add_argument("--gar", type=str, default='avg',
-                        help='Gradient Aggregation Rule')
+                        help='Gradient Aggregation Rule', choices=['avg', 'krum', 'coomed'])
     parser.add_argument("--rho", type=float, default=1e-4,
                         help='Weighting factor for distance constraints')
     parser.add_argument("--data_rep", type=float, default=10,
