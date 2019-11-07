@@ -9,10 +9,10 @@ import numpy as np
 import keras.backend as K
 from keras.utils import np_utils
 
-from mnist import model_mnist
-from census_utils import census_model_1
+from utils.mnist import model_mnist
+from utils.census_utils import census_model_1
 import global_vars as gv
-from io_utils import file_write
+from utils.io_utils import file_write
 from collections import OrderedDict
 
 # gpu_options = tf.GPUOptions(per_process_gpu_memory_fraction=0.99)

@@ -7,8 +7,8 @@ import numpy as np
 # tf.set_random_seed(777)
 # np.random.seed(777)
 import keras.backend as K
-from mnist import model_mnist
-from census_utils import census_model_1
+from utils.mnist import model_mnist
+from utils.census_utils import census_model_1
 
 from utils.eval_utils import eval_minimal
 

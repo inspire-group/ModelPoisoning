@@ -247,7 +247,7 @@ def mal_single_algs(x, y, logits, agent_model, shared_weights, sess, mal_data_X,
 
     alpha_m = 1.0 / args.k
 
-    print mal_visible
+    print(mal_visible)
 
     if args.gar == 'avg':
         delta_other_prev = est_accuracy(mal_visible, t)

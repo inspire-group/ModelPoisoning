@@ -117,9 +117,9 @@ def train_fn(X_train_shards, Y_train_shards, X_test, Y_test, return_dict,
                 dists = np.sort(np.array(dists))
                 dists_subset = dists[:agg_num]
                 score_array[k] = np.sum(dists_subset)
-            print score_array
+            print(score_array)
             krum_index = np.argmin(score_array)
-            print krum_index
+            print(krum_index)
             global_weights += return_dict[str(krum_index)]
             if krum_index == mal_agent_index:
                 krum_select_indices.append(t)

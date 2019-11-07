@@ -79,8 +79,8 @@ def dir_name_fn(args):
     figures_dir_name += '/'
     interpret_figs_dir_name += '/'
 
-    print dir_name
-    print output_file_name
+    print(dir_name)
+    print(output_file_name)
 
     return dir_name, output_dir_name, output_file_name, figures_dir_name, interpret_figs_dir_name
 
@@ -134,7 +134,7 @@ def init():
 
     global args
     args = parser.parse_args()
-    print args
+    print(args)
 
     if args.mal:
         global mal_agent_index

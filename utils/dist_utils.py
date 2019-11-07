@@ -8,7 +8,7 @@ import tensorflow as tf
 
 import global_vars as gv
 
-from io_utils import file_write
+from utils.io_utils import file_write
 
 def collate_weights(delta_curr):
     for l in range(len(delta_curr)):

@@ -19,8 +19,8 @@ import innvestigate.utils as iutils
 import interpret_utils.visualizations as ivis
 
 import global_vars as gv
-from mnist import model_mnist
-from io_utils import data_setup, mal_data_setup
+from utils.mnist import model_mnist
+from utils.io_utils import data_setup, mal_data_setup
 
 eutils = imp.load_source("utils", "interpret_utils/utils.py")
 mnistutils = imp.load_source("utils_mnist", "interpret_utils/utils_mnist.py")

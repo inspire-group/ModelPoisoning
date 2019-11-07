@@ -80,4 +80,4 @@ for t in range(args.T):
                     mal_weights_min = curr_mal_dist
             avg_mal_dist += curr_mal_dist
             mal_count += 1
-        print t, ben_weights_min, ben_weights_max, mal_weights_min, mal_weights_max
+        print(t, ben_weights_min, ben_weights_max, mal_weights_min, mal_weights_max)
