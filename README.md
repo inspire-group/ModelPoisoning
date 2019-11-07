@@ -6,11 +6,11 @@ Dependencies: Tensorflow-1.8, keras, numpy, scipy, scikit-learn
 
 To run federated training with 10 agents, use
 ```
-python dist_train_w_attack.py --dataset=fMNIST --k=10 --C=1.0 --E=5 --T=40 --train --model_num=0
+python3 dist_train_w_attack.py --dataset=fMNIST --k=10 --C=1.0 --E=5 --T=40 --train --model_num=0
 ```
 To run the basic targeted model poisoning attack, use
 ```
-python dist_train_w_attack.py --dataset=fMNIST --k=10 --C=1.0 --E=5 --T=40 --train --model_num=0 --mal --mal_obj=single --mal_strat=converge
+python3 dist_train_w_attack.py --dataset=fMNIST --k=10 --C=1.0 --E=5 --T=40 --train --model_num=0 --mal --mal_obj=single --mal_strat=converge
 ```
 
 The other attacks can be found in the file `malicious_agent.py`.
