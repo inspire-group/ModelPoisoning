@@ -2,7 +2,7 @@
 
 This code accompanies the paper 'Analyzing Federated Learning through an Adversarial Lens' which has been accepted at ICML 2019. It assumes that the Fashion MNIST data and Census data have been downloaded to /home/data/ on the user's machine.
 
-Dependencies: Tensorflow-1.8, keras, numpy, scipy, scikit-learn
+Dependencies: Tensorflow-1.14.0, keras, numpy, scipy, scikit-learn
 
 To run federated training with 10 agents, use
 ```
