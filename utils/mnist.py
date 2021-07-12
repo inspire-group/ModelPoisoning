@@ -9,7 +9,7 @@ from keras.layers import Conv2D, MaxPooling2D, BatchNormalization
 from keras.preprocessing.image import ImageDataGenerator
 from keras.utils import np_utils
 
-from fmnist import load_fmnist
+from .fmnist import load_fmnist
 import global_vars as gv
 
 import argparse

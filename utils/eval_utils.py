@@ -2,17 +2,19 @@
 # Purpose: Useful functions for evaluating a model on test data
 ########################
 import os
-import tensorflow as tf
+import tensorflow.compat.v1 as tf
+tf.disable_v2_behavior()
 import numpy as np
 # tf.set_random_seed(777)
 # np.random.seed(777)
-import keras.backend as K
+# import keras.backend as K
 from keras.utils import np_utils
 
-from mnist import model_mnist
-from census_utils import census_model_1
+from .mnist import model_mnist
+from .census_utils import census_model_1
+from .cifar_utils import cifar10_model
 import global_vars as gv
-from io_utils import file_write
+from .io_utils import file_write
 from collections import OrderedDict
 
 # gpu_options = tf.GPUOptions(per_process_gpu_memory_fraction=0.99)
@@ -21,7 +23,7 @@ def eval_setup(global_weights):
     args = gv.args
 
     if 'MNIST' in args.dataset:
-        K.set_learning_phase(0)
+        tf.keras.backend.set_learning_phase(0)
 
     # global_weights_np = np.load(gv.dir_name + 'global_weights_t%s.npy' % t)
     global_weights_np = global_weights
@@ -29,7 +31,7 @@ def eval_setup(global_weights):
     if 'MNIST' in args.dataset:
         global_model = model_mnist(type=args.model_num)
     elif args.dataset == 'CIFAR-10':
-        global_model = cifar_10_model()
+        global_model = cifar10_model()
     elif args.dataset == 'census':
         global_model = census_model_1()
 
@@ -55,7 +57,7 @@ def eval_setup(global_weights):
     elif args.k == 1:
         sess = tf.Session()
     
-    K.set_session(sess)
+    tf.keras.backend.set_session(sess)
     sess.run(tf.global_variables_initializer())
 
     global_model.set_weights(global_weights_np)
@@ -102,7 +104,7 @@ def eval_minimal(X_test, Y_test, global_weights, return_dict=None):
     if args.dataset == 'CIFAR-10':
         Y_test = Y_test.reshape(len(Y_test))
 
-    for i in range(len(X_test) / gv.BATCH_SIZE):
+    for i in range(int(len(X_test) / gv.BATCH_SIZE)):
         X_test_slice = X_test[i * (gv.BATCH_SIZE):(i + 1) * (gv.BATCH_SIZE)]
         Y_test_slice = Y_test[i * (gv.BATCH_SIZE):(i + 1) * (gv.BATCH_SIZE)]
         # Y_test_cat_slice = np_utils.to_categorical(Y_test_slice)
@@ -134,7 +136,7 @@ def eval_func(X_test, Y_test, t, return_dict, mal_data_X=None, mal_data_Y=None, 
     #     global_weights = np.load(gv.dir_name + 'global_weights_t%s.npy' % t)
 
     if args.dataset == 'CIFAR-10':
-        K.set_learning_phase(1)
+        tf.keras.backend.set_learning_phase(1)
     eval_success, eval_loss = eval_minimal(X_test, Y_test, global_weights)
 
     print('Iteration {}: success {}, loss {}'.format(t, eval_success, eval_loss))

@@ -5,11 +5,11 @@ import os
 import global_vars as gv
 import numpy as np
 
-from mnist import data_mnist
+from .mnist import data_mnist
 from keras.datasets import cifar10
 from keras.utils import np_utils
-from fmnist import load_fmnist
-from census_utils import data_census
+from .fmnist import load_fmnist
+from .census_utils import data_census
 
 
 def file_write(write_dict, purpose='global_eval_loss'):
@@ -17,14 +17,14 @@ def file_write(write_dict, purpose='global_eval_loss'):
 	         '_' + purpose + '.txt', 'a')
 	if write_dict['t'] == 1:
 		d_count = 1
-		for k, v in write_dict.iteritems():
+		for k, v in iter(write_dict.items()):
 			if d_count < len(write_dict):
 				f.write(k + ',')
 			else:
 				f.write(k + '\n')
 			d_count += 1
 		d_count = 1
-		for k, v in write_dict.iteritems():
+		for k, v in iter(write_dict.items()):
 			if d_count < len(write_dict):
 				f.write(str(v) + ',')
 			else:
@@ -32,7 +32,7 @@ def file_write(write_dict, purpose='global_eval_loss'):
 			d_count += 1
 	elif write_dict['t'] != 1:
 		d_count = 1
-		for k, v in write_dict.iteritems():
+		for k, v in iter(write_dict.items()):
 			if d_count < len(write_dict):
 				f.write(str(v) + ',')
 			else:
@@ -67,8 +67,8 @@ def data_setup():
 	elif args.dataset == 'census':
 		X_train, Y_train, X_test, Y_test = data_census()
 		Y_test_uncat = np.argmax(Y_test, axis=1)
-		print Y_test
-		print Y_test_uncat
+		# print Y_test
+		# print Y_test_uncat
 		print('Loaded Census data')
 
 	return X_train, Y_train, X_test, Y_test, Y_test_uncat
@@ -83,7 +83,7 @@ def mal_data_create(X_test, Y_test, Y_test_uncat):
 		true_labels = Y_test
 	elif args.mal_obj == 'single':
 		r = np.random.choice(len(X_test))
-		print r
+		print(r)
 		mal_data_X = X_test[r:r + 1]
 		allowed_targets = list(range(gv.NUM_CLASSES))
 		print("Initial class: %s" % Y_test_uncat[r])
@@ -110,7 +110,7 @@ def mal_data_setup(X_test, Y_test, Y_test_uncat, gen_flag=True):
 
 	data_path = 'data/mal_X_%s_%s.npy' % (args.dataset, args.mal_obj)
 
-	print data_path
+	print(data_path)
 	
 	if not os.path.exists('data/mal_X_%s_%s.npy' % (args.dataset, args.mal_obj)):
 		if gen_flag:

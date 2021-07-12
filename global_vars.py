@@ -3,12 +3,17 @@
 ########################
 
 import argparse
+import warnings
+
+warnings.filterwarnings("ignore")
 import os
-import tensorflow as tf
+
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
+import tensorflow.compat.v1 as tf
+tf.disable_v2_behavior()
 
 
 def dir_name_fn(args):
-
     # Setting directory name to store computed weights
     dir_name = 'weights/%s/model_%s/%s/k%s_E%s_B%s_C%1.0e_lr%.1e' % (
         args.dataset, args.model_num, args.optimizer, args.k, args.E, args.B, args.C, args.eta)
@@ -58,7 +63,7 @@ def dir_name_fn(args):
             args.mal_strat = args.mal_strat
         else:
             # if 'auto' not in args.mal_strat:
-            args.mal_strat += '_boost'+ str(args.mal_boost)
+            args.mal_strat += '_boost' + str(args.mal_boost)
         output_file_name += '_mal_' + args.mal_obj + '_' + args.mal_strat
         dir_name += '_mal_' + args.mal_obj + '_' + args.mal_strat
 
@@ -79,8 +84,8 @@ def dir_name_fn(args):
     figures_dir_name += '/'
     interpret_figs_dir_name += '/'
 
-    print dir_name
-    print output_file_name
+    print(dir_name)
+    print(output_file_name)
 
     return dir_name, output_dir_name, output_file_name, figures_dir_name, interpret_figs_dir_name
 
@@ -88,7 +93,7 @@ def dir_name_fn(args):
 def init():
     # Reading in arguments for the run
     parser = argparse.ArgumentParser()
-    parser.add_argument("--dataset", default='fMNIST',
+    parser.add_argument("--dataset", default='MNIST',
                         help="dataset to be used")
     parser.add_argument("--model_num", type=int,
                         default=0, help="model to be used")
@@ -103,27 +108,27 @@ def init():
                         help="epochs for each agent")
     parser.add_argument("--steps", type=int, default=None,
                         help="GD steps per agent")
-    parser.add_argument("--T", type=int, default=40, help="max time_steps")
-    parser.add_argument("--B", type=int, default=50, help="agent batch size")
-    parser.add_argument("--train", action='store_true')
+    parser.add_argument("--T", type=int, default=80, help="max time_steps")
+    parser.add_argument("--B", type=int, default=100, help="agent batch size")
+    parser.add_argument("--train", default=True, action='store_true')
     parser.add_argument("--lr_reduce", action='store_true')
-    parser.add_argument("--mal", action='store_true')
+    parser.add_argument("--mal", default=True, action='store_true')
     parser.add_argument("--mal_obj", default='single',
                         help='Objective for malicious agent')
-    parser.add_argument("--mal_strat", default='converge',
+    parser.add_argument("--mal_strat", default='asyncFL',
                         help='Strategy for malicious agent')
     parser.add_argument("--mal_num", type=int, default=1,
                         help='Objective for simultaneous targeting')
     parser.add_argument("--mal_delay", type=int, default=0,
                         help='Delay for wait till converge')
-    parser.add_argument("--mal_boost", type=float, default=10.0,
+    parser.add_argument("--mal_boost", type=float, default=10,
                         help='Boosting factor for alternating minimization attack')
     parser.add_argument("--mal_E", type=float, default=5,
                         help='Benign training epochs for malicious agent')
     parser.add_argument("--ls", type=int, default=1,
                         help='Training steps for each malicious step')
     parser.add_argument("--gar", type=str, default='avg',
-                        help='Gradient Aggregation Rule', choices=['avg', 'krum', 'coomed'])
+                        help='Gradient Aggregation Rule')
     parser.add_argument("--rho", type=float, default=1e-4,
                         help='Weighting factor for distance constraints')
     parser.add_argument("--data_rep", type=float, default=10,
@@ -131,22 +136,28 @@ def init():
     parser.add_argument('--gpu_ids', nargs='+', type=int, default=None,
                         help='GPUs to run on')
 
-
     global args
     args = parser.parse_args()
-    print args
+    print(args)
+
+    # making sure single agent run is only for the benign case
+    if k==1:
+        assert args.mal==False
 
     if args.mal:
         global mal_agent_index
         mal_agent_index = args.k - 1
 
+    # Moving rate of 1.0 leads to full overwrite
+    global moving_rate
+
     global gpu_ids
     if args.gpu_ids is not None:
         gpu_ids = args.gpu_ids
     else:
-        gpu_ids = [3,4]
+        gpu_ids = [0]
     global num_gpus
-    num_gpus = len(gpu_ids)
+    num_gpus = 1
 
     global max_agents_per_gpu
 
@@ -161,19 +172,31 @@ def init():
         NUM_CLASSES = 10
         BATCH_SIZE = 100
         if args.dataset == 'MNIST':
-            max_acc = 99.0
+            max_acc = 100.0
         elif args.dataset == 'fMNIST':
-            max_acc = 91.0
-        max_agents_per_gpu = 8
+            max_acc = 90.0
+        max_agents_per_gpu = 6
         mem_frac = 0.05
+        moving_rate = 1.0
     elif args.dataset == 'census':
         global DATA_DIM
         DATA_DIM = 104
         BATCH_SIZE = 50
         NUM_CLASSES = 2
         max_acc = 85.0
-        max_agents_per_gpu = 8
+        max_agents_per_gpu = 6
         mem_frac = 0.05
+        moving_rate = 1.0
+    elif args.dataset == 'CIFAR-10':
+        IMAGE_COLS = 32
+        IMAGE_ROWS = 32
+        NUM_CHANNELS = 3
+        NUM_CLASSES = 10
+        BATCH_SIZE = 100
+        max_acc = 90.0
+        max_agents_per_gpu = 6
+        mem_frac = 0.05
+        moving_rate = 1.0
 
     if max_agents_per_gpu < 1:
         max_agents_per_gpu = 1
@@ -185,3 +208,5 @@ def init():
 
     dir_name, output_dir_name, output_file_name, figures_dir_name, interpret_figs_dir_name = dir_name_fn(
         args)
+
+    return args

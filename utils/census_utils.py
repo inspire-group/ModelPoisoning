@@ -30,13 +30,13 @@ def data_census():
 	Xtr = Xtr[:30160]
 	ytr = ytr[:30160]
 
-	print ytr.shape
+	print(ytr.shape)
 	ytr = np_utils.to_categorical(ytr, gv.NUM_CLASSES)
 	yte = np_utils.to_categorical(yte, gv.NUM_CLASSES)
 	# lb = LabelBinarizer()
 	# ytr = lb.fit_transform(ytr)
 	# yte = lb.transform(yte)
-	print ytr.shape
+	print(ytr.shape)
 
 	return Xtr, ytr, Xte, yte
 

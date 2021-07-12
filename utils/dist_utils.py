@@ -4,11 +4,12 @@
 import numpy as np
 import os
 import argparse
-import tensorflow as tf
+import tensorflow.compat.v1 as tf
+tf.disable_v2_behavior()
 
 import global_vars as gv
 
-from io_utils import file_write
+from .io_utils import file_write
 
 def collate_weights(delta_curr):
     for l in range(len(delta_curr)):
