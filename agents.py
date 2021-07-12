@@ -7,7 +7,8 @@ warnings.filterwarnings("ignore")
 import os
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
-import tensorflow as tf
+import tensorflow.compat.v1 as tf
+tf.disable_v2_behavior()
 import numpy as np
 # tf.set_random_seed(777)
 # np.random.seed(777)

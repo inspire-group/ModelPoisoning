@@ -9,7 +9,8 @@ warnings.filterwarnings("ignore")
 import os
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
-import tensorflow as tf
+import tensorflow.compat.v1 as tf
+tf.disable_v2_behavior()
 
 
 def dir_name_fn(args):
@@ -139,15 +140,22 @@ def init():
     args = parser.parse_args()
     print(args)
 
+    # making sure single agent run is only for the benign case
+    if k==1:
+        assert args.mal==False
+
     if args.mal:
         global mal_agent_index
         mal_agent_index = args.k - 1
 
-    # global gpu_ids
-    # if args.gpu_ids is not None:
-    #     gpu_ids = args.gpu_ids
-    # else:
-    #     gpu_ids = [1]
+    # Moving rate of 1.0 leads to full overwrite
+    global moving_rate
+
+    global gpu_ids
+    if args.gpu_ids is not None:
+        gpu_ids = args.gpu_ids
+    else:
+        gpu_ids = [0]
     global num_gpus
     num_gpus = 1
 
@@ -169,6 +177,7 @@ def init():
             max_acc = 90.0
         max_agents_per_gpu = 6
         mem_frac = 0.05
+        moving_rate = 1.0
     elif args.dataset == 'census':
         global DATA_DIM
         DATA_DIM = 104
@@ -177,6 +186,7 @@ def init():
         max_acc = 85.0
         max_agents_per_gpu = 6
         mem_frac = 0.05
+        moving_rate = 1.0
     elif args.dataset == 'CIFAR-10':
         IMAGE_COLS = 32
         IMAGE_ROWS = 32
@@ -186,6 +196,7 @@ def init():
         max_acc = 90.0
         max_agents_per_gpu = 6
         mem_frac = 0.05
+        moving_rate = 1.0
 
     if max_agents_per_gpu < 1:
         max_agents_per_gpu = 1

@@ -10,7 +10,8 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
 os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 import numpy as np
-import tensorflow as tf
+import tensorflow.compat.v1 as tf
+tf.disable_v2_behavior()
 from multiprocessing import Process, Manager
 from sklearn.metrics.pairwise import cosine_similarity
 from utils.io_utils import data_setup, mal_data_setup
@@ -18,7 +19,7 @@ import global_vars as gv
 from agents import agent, master
 from utils.eval_utils import eval_func, eval_minimal
 from malicious_agent import mal_agent
-from utils.dist_utils import collate_weights, model_shape_size, flatten_vector, reshape_vector
+from utils.dist_utils import collate_weights, model_shape_size
 
 
 def train_fn(X_train_shards, Y_train_shards, X_test, Y_test, return_dict,
@@ -63,9 +64,8 @@ def train_fn(X_train_shards, Y_train_shards, X_test, Y_test, return_dict,
 			true_simul = min(simul_num, agents_left)
 			print('training %s agents' % true_simul)
 			for l in range(true_simul):
-				# gpu_index = int(l / gv.max_agents_per_gpu)
-				# gpu_id = gv.gpu_ids[gpu_index]
-				gpu_id = 0
+				gpu_index = int(l / gv.max_agents_per_gpu)
+				gpu_id = gv.gpu_ids[gpu_index]
 				i = curr_agents[k]
 				if args.mal is False or i != mal_agent_index:
 					p = Process(target=agent, args=(i, X_train_shards[i],
