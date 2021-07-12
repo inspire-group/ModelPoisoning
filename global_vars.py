@@ -8,9 +8,12 @@ import warnings
 warnings.filterwarnings("ignore")
 import os
 
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 import tensorflow.compat.v1 as tf
 tf.disable_v2_behavior()
+
+import logging
+tf.get_logger().setLevel(logging.ERROR)
 
 
 def dir_name_fn(args):
@@ -84,8 +87,8 @@ def dir_name_fn(args):
     figures_dir_name += '/'
     interpret_figs_dir_name += '/'
 
-    print(dir_name)
-    print(output_file_name)
+    # print(dir_name)
+    # print(output_file_name)
 
     return dir_name, output_dir_name, output_file_name, figures_dir_name, interpret_figs_dir_name
 
@@ -138,10 +141,10 @@ def init():
 
     global args
     args = parser.parse_args()
-    print(args)
+    # print(args)
 
     # making sure single agent run is only for the benign case
-    if k==1:
+    if args.k==1:
         assert args.mal==False
 
     if args.mal:
@@ -157,7 +160,7 @@ def init():
     else:
         gpu_ids = [0]
     global num_gpus
-    num_gpus = 1
+    num_gpus = len(gpu_ids)
 
     global max_agents_per_gpu
 

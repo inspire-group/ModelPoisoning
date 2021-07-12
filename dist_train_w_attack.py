@@ -12,6 +12,10 @@ os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 import numpy as np
 import tensorflow.compat.v1 as tf
 tf.disable_v2_behavior()
+
+import logging
+tf.get_logger().setLevel(logging.ERROR)
+
 from multiprocessing import Process, Manager
 from sklearn.metrics.pairwise import cosine_similarity
 from utils.io_utils import data_setup, mal_data_setup
@@ -92,6 +96,7 @@ def train_fn(X_train_shards, Y_train_shards, X_test, Y_test, return_dict,
 		global_weights = np.load(gv.dir_name + 'global_weights_t%s.npy' % t, allow_pickle=True)
 
 		if 'avg' in args.gar:
+			print('Using standard mean aggregation')
 			if args.mal:
 				count = 0
 				for k in range(num_agents_per_time):
@@ -110,6 +115,7 @@ def train_fn(X_train_shards, Y_train_shards, X_test, Y_test, return_dict,
 				for k in range(num_agents_per_time):
 					global_weights += alpha_i * return_dict[str(curr_agents[k])]
 		elif 'krum' in args.gar:
+			print('Using krum for aggregation')
 			collated_weights = []
 			collated_bias = []
 			agg_num = int(num_agents_per_time - 1 - 2)
@@ -136,6 +142,7 @@ def train_fn(X_train_shards, Y_train_shards, X_test, Y_test, return_dict,
 			if krum_index == mal_agent_index:
 				krum_select_indices.append(t)
 		elif 'coomed' in args.gar:
+			print('Using coordinate-wise median for aggregation')
 			# Fix for mean aggregation first!
 			weight_tuple_0 = return_dict[str(curr_agents[0])]
 			weights_0, bias_0 = collate_weights(weight_tuple_0)
@@ -250,6 +257,6 @@ def main(args):
 
 if __name__ == "__main__":
 	args = gv.init()
-	# tf.set_random_seed(777)
-	# np.random.seed(777)
+	tf.set_random_seed(777)
+	np.random.seed(777)
 	main(args)

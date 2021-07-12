@@ -6,12 +6,16 @@ import warnings
 warnings.filterwarnings("ignore")
 import os
 
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 import tensorflow.compat.v1 as tf
 tf.disable_v2_behavior()
+
+import logging
+tf.get_logger().setLevel(logging.ERROR)
+
 import numpy as np
-# tf.set_random_seed(777)
-# np.random.seed(777)
+tf.set_random_seed(777)
+np.random.seed(777)
 from utils.mnist import model_mnist
 from utils.census_utils import census_model_1
 from utils.cifar_utils import cifar10_model
@@ -30,8 +34,10 @@ def agent(i, X_shard, Y_shard, t, gpu_id, return_dict, X_test, Y_test, lr=None):
     args = gv.init()
     if lr is None:
         lr = args.eta
-    # print('Agent %s on GPU %s' % (i,gpu_id))
+    print('Agent %s on GPU %s' % (i,gpu_id))
     # set environment
+    os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
+    os.environ["CUDA_VISIBLE_DEVICES"] = str(gpu_id)
 
     shared_weights = np.load(gv.dir_name + 'global_weights_t%s.npy' % t, allow_pickle=True)
     shard_size = len(X_shard)
@@ -100,7 +106,7 @@ def agent(i, X_shard, Y_shard, t, gpu_id, return_dict, X_test, Y_test, lr=None):
         sess = tf.Session()
     else:
         return
-    tf.keras.backend.set_session(sess)
+    tf.compat.v1.keras.backend.set_session(sess)
     sess.run(tf.global_variables_initializer())
 
     if pre_theta is not None:

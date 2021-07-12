@@ -6,9 +6,13 @@ import warnings
 warnings.filterwarnings("ignore")
 import os
 
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 import tensorflow.compat.v1 as tf
 tf.disable_v2_behavior()
+
+import logging
+tf.get_logger().setLevel(logging.ERROR)
+
 import numpy as np
 
 from utils.mnist import model_mnist
@@ -196,7 +200,8 @@ def alternate_train(sess, t, optimizer, loss, mal_optimizer, mal_loss, x, y,
             mal_loss_val_bef = sess.run([mal_loss], feed_dict={
                 x: mal_data_X, y: mal_data_Y})
         # Malicious, only if mal loss is non-zero
-        if step >= 0 and mal_loss_val_bef > 0.0:
+        print(mal_loss_val_bef)
+        if step >= 0 and mal_loss_val_bef[0] > 0.0:
             # print('Boosting mal at step %s' % step)
             weights_ben_local = np.array(agent_model.get_weights())
             if 'dist' in args.mal_strat:
@@ -473,10 +478,10 @@ def mal_agent(X_shard, Y_shard, mal_data_X, mal_data_Y, t, gpu_id, return_dict,
 
     tf.keras.backend.set_learning_phase(1)
 
-    # print('Malicious Agent on GPU %s' % gpu_id)
-    # set enviornment
-    # os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
-    # os.environ["CUDA_VISIBLE_DEVICES"] = str(gpu_id)
+    print('Malicious Agent on GPU %s' % gpu_id)
+    # set environment
+    os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
+    os.environ["CUDA_VISIBLE_DEVICES"] = str(gpu_id)
 
     if args.dataset == 'census':
         x = tf.placeholder(shape=(None,
