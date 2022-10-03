@@ -25,8 +25,8 @@ def data_mnist(one_hot=True):
         (X_train, y_train), (X_test, y_test) = mnist.load_data()
 
     elif gv.args.dataset == 'fMNIST':
-        X_train, y_train = load_fmnist('/data/nvme/arjun/datasets/FashionMNIST/raw', kind='train')
-        X_test, y_test = load_fmnist('/data/nvme/arjun/datasets/FashionMNIST/raw', kind='t10k')
+        X_train, y_train = load_fmnist('/home/data/', kind='train')
+        X_test, y_test = load_fmnist('/home/data/', kind='t10k')
 
 
     X_train = X_train.reshape(X_train.shape[0],
